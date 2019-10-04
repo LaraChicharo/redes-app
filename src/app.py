@@ -17,9 +17,9 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
 )
 
 
-
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
+app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 class User(db.Model):
