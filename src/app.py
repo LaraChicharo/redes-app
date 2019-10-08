@@ -1,3 +1,4 @@
+import hashlib
 from os import environ
 
 from flask import Flask, render_template, request
@@ -32,12 +33,14 @@ db.create_all()
 
 
 def create_user(username, password):
+    password = hashlib.sha256(password.encode()).hexdigest()
     new_user = User(username=username, password=password)
     db.session.add(new_user)
     db.session.commit()
 
 
 def check_user_pass(username, password):
+    password = hashlib.sha256(password.encode()).hexdigest()
     q = User.query.filter(
         User.username == username and User.password == password
     )
@@ -79,3 +82,6 @@ def signup():
             create_user(username, password)
             return 'user created successfully'
 
+
+if __name__ == '__main__':
+    app.run(debug=True)
