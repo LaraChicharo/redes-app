@@ -2,8 +2,13 @@
 <head>
 </head>
 <body>
+    <h3>Results for query "{{query}}"</h3>
     {% for result in results %}
-        <p>{{result.Title}}</p>
+        <div class="movie">
+        <a href="movie/{{result.imdbID}}">
+            <p>{{result.Title}}</p>
+            <img src={{result.Poster}} height="200px">
+        </a>
         <p>{{result.Year}}</p>
         <form method="POST" action="/add-wishlist">
             {#<input type="hidden" name="userid" value={{user.id}}>
@@ -12,6 +17,7 @@
             <input type="hidden" name="movieyear" value={{result.Year}}>
             <input type="submit" value="Add">#}
         </form>
+        </div>
         <br>
     {% endfor %}
 </body>

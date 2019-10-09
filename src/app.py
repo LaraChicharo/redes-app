@@ -117,7 +117,9 @@ def search():
     
     status_code, success, res = search_movie(mquery)
     if success:
-        return render_template('results.html', results=res['Search'])
+        return render_template(
+            'results.html', results=res['Search'], query=mquery
+        )
     else:
         return (res, status_code)
 
