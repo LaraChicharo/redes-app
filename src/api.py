@@ -10,11 +10,8 @@ BASE_URL = 'http://www.omdbapi.com/?apikey={}'.format(KEY)
 def search_movie(title):
     url = '{}&s={}'.format(BASE_URL, title)
     res = requests.get(url)
-    if res.status_code == 200:
-        res = res.json()
-        if res['Response']:
-            return (200, res)
-        else:
-            return (404, None)
+    resd = res.json()
+    if resd['Response'] == 'True':
+        return (200, True, resd)
     else:
-        return (res.status_code, None)
+        return (res.status_code, False, resd['Error'])

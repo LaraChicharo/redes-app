@@ -24,11 +24,36 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
+
+movies = db.Table(
+    'movies',
+    db.Column(
+        'userid', db.Integer, db.ForeignKey('user.id'), primary_key=True
+    ),
+    db.Column(
+        'imdbid',
+        db.String(64), db.ForeignKey('movie.imdbid'), primary_key=True
+    )
+)
+
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=False, nullable=False)
     password = db.Column(db.String(256), index=False, nullable=False)
+    movies = db.relationship(
+        'Movie', secondary=movies, lazy='subquery',
+        backref=db.backref('users', lazy=True)
+    )
+
+
+class Movie(db.Model):
+    __tablename__ = 'movie'
+    imdbid = db.Column(db.String(64), nullable=False, primary_key=True)
+    title = db.Column(db.String(256), nullable=False)
+    year = db.Column(db.Integer, nullable=True)
+
 
 db.create_all()
 
@@ -89,16 +114,18 @@ def search():
     mquery = request.args['mquery']
     if len(mquery) < 3:
         return ('Query too short', 400)
-    status_code, res = search_movie(mquery)
-    if status_code == 200:
+    
+    status_code, success, res = search_movie(mquery)
+    if success:
         return render_template('results.html', results=res['Search'])
-    elif status_code == 404:
-        return ('No results :c', 200)
     else:
-        return (
-            'API responded with status code: {}'.format(status_code),
-            status_code
-        )
+        return (res, status_code)
+
+
+@app.route('/wish')
+def wish_list():
+    return render_template('wish_list.html')
+    # return render_template('wish_list.html', user=user, movies=movies)
 
 
 if __name__ == '__main__':

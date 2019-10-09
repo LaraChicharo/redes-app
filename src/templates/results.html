@@ -3,9 +3,16 @@
 </head>
 <body>
     {% for result in results %}
-    <p>{{result.Title}}</p>
-    <p>{{result.Year}}</p>
+        <p>{{result.Title}}</p>
+        <p>{{result.Year}}</p>
+        <form method="POST" action="/add-wishlist">
+            {#<input type="hidden" name="userid" value={{user.id}}>
+            <input type="hidden" name="movieid" value={{result.imdbID}}>
+            <input type="hidden" name="movietitle" value={{result.Title}}>
+            <input type="hidden" name="movieyear" value={{result.Year}}>
+            <input type="submit" value="Add">#}
+        </form>
+        <br>
     {% endfor %}
-    <br>
 </body>
 </html>
