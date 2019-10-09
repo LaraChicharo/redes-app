@@ -2,7 +2,7 @@ import hashlib
 from os import environ
 
 from api import search_movie, search_movie_id
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -22,8 +22,15 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_ECHO'] = True
+
 db = SQLAlchemy(app)
 
+print('*** ----- ***')
+print('*** SECRET KEY SHOULD NOT BE DEFINED HERE IN PRODUCTION ***')
+print('*** ----- ***')
+app.secret_key = 'blablala'
+print('*** SECRET KEY SHOULD NOT BE DEFINED HERE IN PRODUCTION ***')
+print('*** ----- ***')
 
 movies = db.Table(
     'movies',
@@ -71,9 +78,9 @@ def check_user_pass(username, password):
         User.username == username and User.password == password
     )
     if q.first():
-       return True
+        return (True, q.first())
     else:
-        return False
+        return (False, None)
 
 
 @app.route('/')
@@ -88,10 +95,20 @@ def login():
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if check_user_pass(username, password):
-            return 'successful login'
+        exists, user = check_user_pass(username, password)
+        if exists:
+            session['username'] = user.username
+            session['userid'] = user.id
+            return render_template('index.html')
         else:
             return 'combination of username/password doesn\'t exists'
+
+
+@app.route('/logout', methods=['POST', 'GET'])
+def logout():
+    session.pop('username', None)
+    session.pop('userid', None)
+    return render_template('index.html')
 
 
 @app.route('/signup', methods=['POST', 'GET'])
