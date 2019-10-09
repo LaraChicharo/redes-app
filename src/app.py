@@ -86,13 +86,14 @@ def signup():
 
 @app.route('/search')
 def search():
-    title = request.args['mquery']
-    status_code, title = search_movie(title)
+    mquery = request.args['mquery']
+    if len(mquery) < 3:
+        return ('Query too short', 400)
+    status_code, res = search_movie(mquery)
     if status_code == 200:
-        if title:
-            return (title, 200)
-        else:
-            return ('No se encontro :c', 200)
+        return render_template('results.html', results=res['Search'])
+    elif status_code == 404:
+        return ('No results :c', 200)
     else:
         return (
             'API responded with status code: {}'.format(status_code),

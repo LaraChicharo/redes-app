@@ -8,13 +8,13 @@ BASE_URL = 'http://www.omdbapi.com/?apikey={}'.format(KEY)
 
 
 def search_movie(title):
-    url = '{}&t={}'.format(BASE_URL, title)
-    r = requests.get(url)
-    if r.status_code == 200:
-        r = r.json()
-        title = r.get('Title')
-        return (200, title)
+    url = '{}&s={}'.format(BASE_URL, title)
+    res = requests.get(url)
+    if res.status_code == 200:
+        res = res.json()
+        if res['Response']:
+            return (200, res)
+        else:
+            return (404, None)
     else:
-        print('error: ')
-        print(r.text)
-        return (r.status_code, None)
+        return (res.status_code, None)
