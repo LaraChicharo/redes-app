@@ -1,7 +1,7 @@
 import hashlib
 from os import environ
 
-from api import search_movie
+from api import search_movie, search_movie_id
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
@@ -128,5 +128,14 @@ def wish_list():
     # return render_template('wish_list.html', user=user, movies=movies)
 
 
+@app.route('/movie/<imdbid>')
+def movie_detail(imdbid):
+    status_code, success, res = search_movie_id(imdbid)
+    if success:
+        return render_template('movie_detail.html', movie=res, status_code=200)
+    else:
+        return (res, status_code)
+
+ 
 if __name__ == '__main__':
     app.run(debug=True)
