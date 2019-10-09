@@ -1,6 +1,7 @@
 import hashlib
 from os import environ
 
+from api import search_movie
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 
@@ -81,6 +82,22 @@ def signup():
         else:
             create_user(username, password)
             return 'user created successfully'
+
+
+@app.route('/search')
+def search():
+    title = request.args['mquery']
+    status_code, title = search_movie(title)
+    if status_code == 200:
+        if title:
+            return (title, 200)
+        else:
+            return ('No se encontro :c', 200)
+    else:
+        return (
+            'API responded with status code: {}'.format(status_code),
+            status_code
+        )
 
 
 if __name__ == '__main__':
