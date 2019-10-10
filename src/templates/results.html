@@ -11,11 +11,11 @@
         </a>
         <p>{{result.Year}}</p>
         <form method="POST" action="/add-wishlist">
-            {#<input type="hidden" name="userid" value={{user.id}}>
+            <input type="hidden" name="userid" value={{userid}}>
             <input type="hidden" name="movieid" value={{result.imdbID}}>
             <input type="hidden" name="movietitle" value={{result.Title}}>
             <input type="hidden" name="movieyear" value={{result.Year}}>
-            <input type="submit" value="Add">#}
+            <input type="submit" value="Add">
         </form>
         </div>
         <br>

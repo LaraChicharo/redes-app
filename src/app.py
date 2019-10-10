@@ -2,7 +2,7 @@ import hashlib
 from os import environ
 
 from api import search_movie, search_movie_id
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -50,8 +50,8 @@ class User(db.Model):
     username = db.Column(db.String(64), index=False, nullable=False)
     password = db.Column(db.String(256), index=False, nullable=False)
     movies = db.relationship(
-        'Movie', secondary=movies, lazy='subquery',
-        backref=db.backref('users', lazy=True)
+        'Movie', secondary=movies, lazy=False,
+        backref=db.backref('users', lazy=False)
     )
 
 
@@ -59,7 +59,7 @@ class Movie(db.Model):
     __tablename__ = 'movie'
     imdbid = db.Column(db.String(64), nullable=False, primary_key=True)
     title = db.Column(db.String(256), nullable=False)
-    year = db.Column(db.Integer, nullable=True)
+    year = db.Column(db.String(64), nullable=True)
 
 
 db.create_all()
@@ -81,6 +81,20 @@ def check_user_pass(username, password):
         return (True, q.first())
     else:
         return (False, None)
+
+
+def create_movie(imdbid, title, year):
+    new_movie = Movie(imdbid=imdbid, title=title, year=year)
+    db.session.add(new_movie)
+    db.session.commit()
+    return new_movie
+
+
+def add_wishlist(userid, movie):
+    user = User.query.filter(User.id == userid).first()
+    user.movies.append(movie)
+    db.session.add(user)
+    db.session.commit()
 
 
 @app.route('/')
@@ -134,17 +148,41 @@ def search():
     
     status_code, success, res = search_movie(mquery)
     if success:
+        userid = session['userid']
         return render_template(
-            'results.html', results=res['Search'], query=mquery
+            'results.html', results=res['Search'], query=mquery, userid=userid
         )
     else:
         return (res, status_code)
 
 
+@app.route('/add-wishlist', methods=['POST'])
+def add_wishlist_route():
+    if request.method == 'POST':
+        userid = request.form['userid']
+        movie_imdbid = request.form['movieid']
+        movietitle = request.form['movietitle']
+        movieyear = request.form['movieyear']
+
+        movie = Movie.query.filter(Movie.imdbid == movie_imdbid).first()
+        if not movie:
+            movie = create_movie(movie_imdbid, movietitle, movieyear)
+        add_wishlist(userid, movie)
+        return redirect('/wish')
+
+
 @app.route('/wish')
 def wish_list():
-    return render_template('wish_list.html')
-    # return render_template('wish_list.html', user=user, movies=movies)
+    if session.get('username'):
+        user = User.query.filter(User.id == session['userid']).first()
+        movies = list()
+        for m in list(user.movies):
+            movies.append(m)
+        return render_template(
+            'wish_list.html', movies=user.movies, nmovies=len(user.movies)
+        )
+    else:
+        return redirect('/login')
 
 
 @app.route('/movie/<imdbid>')

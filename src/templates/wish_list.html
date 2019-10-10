@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title>My wishlist</title>
+</head>
+<body>
+    <header>
+    {#{% if session.username is defined %}
+        <form method="GET" action="/logout">
+            <input type="submit" value="logout">
+        </form>
+    {% endif %} #}
+    </header>
+    {{ nmovies }}
+    {% for movie in movies %}
+        <p>Holap</p>
+        <div>
+        <a href="movie/{{movie.imdbid}}">
+            <p>{{movie.title}}</p>
+            <!--<img src="{{movie.Poster}}" height="200px">-->
+        </a>
+        <p>{{movie.year}}</p>
+        </div>
+        <br>
+    {% endfor %}
+</body>
+</html>
