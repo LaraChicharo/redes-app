@@ -3,13 +3,7 @@
     <title>My wishlist</title>
 </head>
 <body>
-    <header>
-    {#{% if session.username is defined %}
-        <form method="GET" action="/logout">
-            <input type="submit" value="logout">
-        </form>
-    {% endif %} #}
-    </header>
+    {% include 'header.html' %}
     {% for movie in movies %}
         <div>
         <a href="movie/{{movie.imdbid}}">

@@ -1,0 +1,8 @@
+<header>
+    {% if session.username is defined %}
+        <p>Hola, {{ session.username }}</p>
+        <form method="GET" action="/logout">
+            <input type="submit" value="logout">
+        </form>
+    {% endif %}
+</header>
