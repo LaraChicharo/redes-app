@@ -4,5 +4,9 @@
         <form method="GET" action="/logout">
             <input type="submit" value="logout">
         </form>
+    {% else %}
+       <p>Hola, visitante</p>
+       <a href="/login">login</a>
+       <a href="/signup">signup</a>
     {% endif %}
 </header>

@@ -5,15 +5,6 @@
 <body>
     {% include 'header.html' %}
     <h2> Moviechinga </h2>
-    {% if session.username is defined %}
-        <p>Hola, {{session.username}}</p>
-        <p>id {{session.userid}}</p>
-        <a href="/logout">logout</a>
-    {% else %}
-        <p>Hola, visitante</p>
-        <a href="/login">login</a>
-        <a href="/signup">signup</a>
-    {% endif %}
 
     <form method="GET" action="/search">
         <p>Search</p><input type="text" name="mquery">
