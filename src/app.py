@@ -98,6 +98,17 @@ def add_wishlist(userid, movie):
     db.session.commit()
 
 
+@app.context_processor
+def utility_processor():
+    def movie_in_wishlist(userid, movieid):
+        user = User.query.filter(User.id == userid).first()
+        for movie in user.movies:
+            if movie.imdbid == movieid:
+                return True
+        return False
+    return dict(movie_in_wishlist=movie_in_wishlist)
+
+
 @app.route('/')
 def home():
     return render_template('index.html')
