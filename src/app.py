@@ -60,6 +60,7 @@ class Movie(db.Model):
     imdbid = db.Column(db.String(64), nullable=False, primary_key=True)
     title = db.Column(db.String(256), nullable=False)
     year = db.Column(db.String(64), nullable=True)
+    poster = db.Column(db.String(256), nullable=True)
 
 
 db.create_all()
@@ -83,8 +84,8 @@ def check_user_pass(username, password):
         return (False, None)
 
 
-def create_movie(imdbid, title, year):
-    new_movie = Movie(imdbid=imdbid, title=title, year=year)
+def create_movie(imdbid, title, year, poster):
+    new_movie = Movie(imdbid=imdbid, title=title, year=year, poster=poster)
     db.session.add(new_movie)
     db.session.commit()
     return new_movie
@@ -163,10 +164,13 @@ def add_wishlist_route():
         movie_imdbid = request.form['movieid']
         movietitle = request.form['movietitle']
         movieyear = request.form['movieyear']
+        movieposter = request.form['movieposter']
 
         movie = Movie.query.filter(Movie.imdbid == movie_imdbid).first()
         if not movie:
-            movie = create_movie(movie_imdbid, movietitle, movieyear)
+            movie = create_movie(
+                movie_imdbid, movietitle, movieyear, movieposter
+            )
         add_wishlist(userid, movie)
         return redirect('/wish')
 
@@ -175,9 +179,6 @@ def add_wishlist_route():
 def wish_list():
     if session.get('username'):
         user = User.query.filter(User.id == session['userid']).first()
-        movies = list()
-        for m in list(user.movies):
-            movies.append(m)
         return render_template(
             'wish_list.html', movies=user.movies, nmovies=len(user.movies)
         )

@@ -10,13 +10,11 @@
         </form>
     {% endif %} #}
     </header>
-    {{ nmovies }}
     {% for movie in movies %}
-        <p>Holap</p>
         <div>
         <a href="movie/{{movie.imdbid}}">
             <p>{{movie.title}}</p>
-            <!--<img src="{{movie.Poster}}" height="200px">-->
+            <img src="{{movie.poster}}" height="200px">
         </a>
         <p>{{movie.year}}</p>
         </div>
