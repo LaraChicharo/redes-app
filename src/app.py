@@ -148,8 +148,8 @@ def search():
         return ('Query too short', 400)
     
     status_code, success, res = search_movie(mquery)
-    if success:
-        userid = session['userid']
+    if success :
+        userid = session.get('userid')
         return render_template(
             'results.html', results=res['Search'], query=mquery, userid=userid
         )
