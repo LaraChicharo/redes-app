@@ -4,6 +4,7 @@ from os import environ
 from api import search_movie, search_movie_id
 from flask import Flask, render_template, request, session, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_bootstrap import Bootstrap
 
 
 POSTGRES_USER = environ['POSTGRES_USER']
@@ -20,6 +21,7 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
 
 
 app = Flask(__name__)
+Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_ECHO'] = True
 
