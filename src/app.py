@@ -19,7 +19,7 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
     db=POSTGRES_DB
 )
 
-session = dict()
+msession = dict()
 
 
 app = Flask(__name__)
@@ -117,36 +117,36 @@ def utility_processor():
 
 @app.route('/')
 def home():
-    return render_template('index.html', session=session)
+    return render_template('index.html', msession=msession)
 
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', msession=msession)
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         exists, user = check_user_pass(username, password)
         if exists:
-            session['username'] = user.username
-            session['userid'] = user.id
-            return render_template('index.html', session=session)
+            msession['username'] = user.username
+            msession['userid'] = user.id
+            return render_template('index.html', msession=msession)
         else:
             return 'combination of username/password doesn\'t exists'
 
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
-    session.pop('username', None)
-    session.pop('userid', None)
-    return render_template('index.html', session=session)
+    msession.pop('username', None)
+    msession.pop('userid', None)
+    return render_template('index.html', msession=msession)
 
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
     if request.method == 'GET':
-        return render_template('signup.html')
+        return render_template('signup.html', msession=msession)
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -166,13 +166,13 @@ def search():
     
     status_code, success, res = search_movie(mquery)
     if success :
-        userid = session.get('userid')
+        userid = msession.get('userid')
         return render_template(
             'results.html',
             results=res['Search'],
             query=mquery,
             userid=userid,
-            session=session
+            msession=msession
         )
     else:
         return (res, status_code)
@@ -198,13 +198,13 @@ def add_wishlist_route():
 
 @app.route('/wish')
 def wish_list():
-    if session.get('username'):
-        user = User.query.filter(User.id == session['userid']).first()
+    if msession.get('username'):
+        user = User.query.filter(User.id == msession['userid']).first()
         return render_template(
             'wish_list.html',
             movies=user.movies,
             nmovies=len(user.movies),
-            session=session
+            msession=msession
         )
     else:
         return redirect('/login')
@@ -217,7 +217,7 @@ def movie_detail(imdbid):
         return render_template(
             'movie_detail.html',
             movie=res,
-            session=session,
+            msession=msession,
             status_code=200
         )
     else:

@@ -14,7 +14,7 @@
     </a>
 
     <ul class="navbar-nav mr-auto">
-      {% if session.username is defined %}
+      {% if msession.username is defined %}
       <li class="nav-item">
 	      <a class="nav-link" href="/wish">Wish List</a>
       </li>
@@ -26,7 +26,7 @@
       </li>
       <li class="nav-item">
         <span class="navbar-text">
-          Hola, {{ session.username }}
+          Hola, {{ msession.username }}
         </span>
       </li>
       
@@ -52,7 +52,6 @@
     </form>
     
   </nav>
-
 
   {% endblock %}
 

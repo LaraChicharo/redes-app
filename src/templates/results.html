@@ -13,7 +13,7 @@
             <img src={{result.Poster}} height="200px">
         </a>
         <p>{{result.Year}}</p>
-        {% if session.username is defined and
+        {% if msession.username is defined and
             not movie_in_wishlist(userid, result.imdbID)
         %}
         <form method="POST" action="/add-wishlist">
