@@ -2,7 +2,7 @@ import hashlib
 from os import environ
 
 from api import search_movie, search_movie_id
-from flask import Flask, render_template, request, session, redirect
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 
@@ -18,6 +18,8 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
     url=POSTGRES_URL,
     db=POSTGRES_DB
 )
+
+session = dict()
 
 
 app = Flask(__name__)
@@ -115,7 +117,7 @@ def utility_processor():
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', session=session)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -129,7 +131,7 @@ def login():
         if exists:
             session['username'] = user.username
             session['userid'] = user.id
-            return render_template('index.html')
+            return render_template('index.html', session=session)
         else:
             return 'combination of username/password doesn\'t exists'
 
@@ -138,7 +140,7 @@ def login():
 def logout():
     session.pop('username', None)
     session.pop('userid', None)
-    return render_template('index.html')
+    return render_template('index.html', session=session)
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -166,7 +168,11 @@ def search():
     if success :
         userid = session.get('userid')
         return render_template(
-            'results.html', results=res['Search'], query=mquery, userid=userid
+            'results.html',
+            results=res['Search'],
+            query=mquery,
+            userid=userid,
+            session=session
         )
     else:
         return (res, status_code)
@@ -195,7 +201,10 @@ def wish_list():
     if session.get('username'):
         user = User.query.filter(User.id == session['userid']).first()
         return render_template(
-            'wish_list.html', movies=user.movies, nmovies=len(user.movies)
+            'wish_list.html',
+            movies=user.movies,
+            nmovies=len(user.movies),
+            session=session
         )
     else:
         return redirect('/login')
@@ -205,7 +214,12 @@ def wish_list():
 def movie_detail(imdbid):
     status_code, success, res = search_movie_id(imdbid)
     if success:
-        return render_template('movie_detail.html', movie=res, status_code=200)
+        return render_template(
+            'movie_detail.html',
+            movie=res,
+            session=session,
+            status_code=200
+        )
     else:
         return (res, status_code)
 
