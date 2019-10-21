@@ -1,0 +1,31 @@
+/* body { */
+/*   background-image: url("static/collage1.jpeg"); */
+/* } */
+
+body{
+    overflow-x: hidden;
+    font-family: 'Lato', sans-serif;
+    color: #505962;
+}
+
+.navbar{
+    background: rgba(0, 0, 0, 0.267);
+    align-content: center;
+}
+
+.form1 {
+    background-color: aliceblue;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #000;
+}
+
+.caption {
+    width: 100%;
+    max-width: 100%;
+    position: absolute;
+    top: 38%;
+    color: white;
+    -webkit-text-stroke: 1px black;
+    -webkit-text-fill-color: white;
+}
