@@ -21,9 +21,9 @@ DB_URL = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(
 
 
 app = Flask(__name__)
-Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_ECHO'] = True
+Bootstrap(app)
 
 db = SQLAlchemy(app)
 
@@ -76,6 +76,8 @@ def create_user(username, password):
 
 
 def check_user_pass(username, password):
+    if not password or password == '':
+        return (False, None)
     password = hashlib.sha256(password.encode()).hexdigest()
     q = User.query.filter(
         User.username == username and User.password == password
